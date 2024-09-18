@@ -15,6 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('username');
             $table->string('password');
+            $table->string('lastname');
+            $table->string('firstname');
+            $table->string('name');
+            $table->string('ava');
+            $table->string('coverphoto');
             $table->rememberToken();
             $table->timestamps();
         });
