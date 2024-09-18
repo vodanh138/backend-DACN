@@ -65,8 +65,6 @@ class TemplateService implements TemplateServiceInterface
                     'status' => 'success',
                     'access_token' => $token,
                     'token_type' => 'Bearer',
-                    'username' => $user->username,
-                    'role' => $user->hasRole('super-admin') ? 'super-admin' : ($user->hasRole('admin') ? 'admin' : 'user'),
                 ],
                 __('messages.login-T')
             );
@@ -91,5 +89,66 @@ class TemplateService implements TemplateServiceInterface
                 return $this->responseFail(__('messages.editName-F'));
             }
         }
+    }
+    public function viewProfile(){
+        $user = $this->userRepository->findLoggedUser();
+        return $this->responseSuccess([
+            'user'=> $user,
+        ]);
+    }
+    public function uploadCoverphoto($request){
+        $user = $this->userRepository->findLoggedUser();
+        if ($request->hasFile('image')) {
+            try {
+                $image = $request->file('image');
+                $imageName = '/images/' . time() . '.' . $image->getClientOriginalExtension();
+
+                $oldImage = $user->coverphoto;
+                if ($oldImage && $oldImage != '/images/default-coverphoto.png') {
+                    $oldImagePath = public_path() . '/' . $oldImage;
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+
+                $image->move(public_path('images'), $imageName);
+                $user->update([
+                    'coverphoto' => $imageName,
+                ]);
+                return $this->responseSuccess(__('messages.avaEdit-T'));
+            } catch (\Exception $e) {
+                return $this->responseFail(__('messages.avaEdit-F'));
+            }
+        }
+        return $this->responseFail(__('messages.avaEdit-F'));
+    }
+    public function uploadAvatar($request){
+        $user = $this->userRepository->findLoggedUser();
+        
+        if ($request->hasFile('image')) {
+            try {
+                $image = $request->file('image');
+                $imageName = '/images/' . time() . '.' . $image->getClientOriginalExtension();
+                
+                $oldImage = $user->ava;
+                if ($oldImage && $oldImage != '/images/default-ava.png') {
+                    $oldImagePath = public_path() . '/' . $oldImage;
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+
+                $image->move(public_path('images'), $imageName);
+                $user->update([
+                    'ava' => $imageName,
+                ]);
+                return $this->responseSuccess(__('messages.avaEdit-T'));
+            } catch (\Exception $e) {
+                return $this->responseFail(__('messages.avaEdit-F'));
+            }
+        }
+        else
+            
+        return $this->responseFail(__('messages.avaEdit-F'));
     }
 }

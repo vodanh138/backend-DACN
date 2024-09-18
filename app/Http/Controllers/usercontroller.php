@@ -41,4 +41,16 @@ class usercontroller extends Controller
     {
         return $this->UserService->editName($request->lastname, $request->firstname);
     }
+    public function viewProfile()
+    {
+        return $this->UserService->viewProfile();
+    }
+    public function uploadCoverphoto(Request $request)
+    {
+        return $this->UserService->uploadCoverphoto($request);
+    }
+    public function uploadAvatar(Request $request)
+    {
+        return $this->UserService->uploadAvatar($request);
+    }
 }
