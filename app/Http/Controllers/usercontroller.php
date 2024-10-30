@@ -45,6 +45,10 @@ class usercontroller extends Controller
     {
         return $this->UserService->viewProfile();
     }
+    public function getPost()
+    {
+        return $this->UserService->getPost();
+    }
     public function uploadCoverphoto(Request $request)
     {
         return $this->UserService->uploadCoverphoto($request);

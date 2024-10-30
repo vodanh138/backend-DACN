@@ -13,18 +13,12 @@ return new class extends Migration
     {
         Schema::create('likes', function (Blueprint $table) {
 
-            $table->id('like_id');
-            $table->unsignedBigInteger('post_id')->nullable();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('comment_id')->nullable();
+            $table->id();
+            $table->foreignId('post_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('comment_id')->constrained()->onDelete('cascade');
             $table->timestamps();
 
-            $table->foreign('post_id')->references('post_id')->on('posts')->onDelete('cascade');
-            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
-            $table->foreign('comment_id')
-            ->references('comment_id')
-            ->on('comments')
-            ->onDelete('cascade');
         });
     }
 

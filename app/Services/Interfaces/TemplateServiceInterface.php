@@ -8,6 +8,7 @@ interface TemplateServiceInterface
     public function loginProcessing($username, $password);
     public function editName($lastname, $firstname);
     public function viewProfile();
+    public function getPost();
     public function uploadCoverphoto($request);
     public function uploadAvatar($request);
 }

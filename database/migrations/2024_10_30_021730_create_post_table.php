@@ -13,13 +13,13 @@ return new class extends Migration
     {
         
         Schema::create('posts', function (Blueprint $table) {
-            $table->id('post_id');
+            $table->id();
             $table->string('title');
             $table->text('content');
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('image')->nullable();
-            $table->integer('clicks')->default(0);
-            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
+            $table->integer('views')->default(0);
+
             $table->timestamps();
         });
     }

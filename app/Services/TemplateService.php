@@ -8,6 +8,7 @@ use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\DB;
+use MongoDB\Client;
 
 class TemplateService implements TemplateServiceInterface
 {
@@ -95,6 +96,9 @@ class TemplateService implements TemplateServiceInterface
         return $this->responseSuccess([
             'user'=> $user,
         ]);
+    }
+    public function getPost(){
+        DB::connection('mongodb')->table('collection_name')->get();
     }
     public function uploadCoverphoto($request){
         $user = $this->userRepository->findLoggedUser();
