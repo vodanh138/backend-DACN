@@ -4,8 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Role;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class RoleRepository extends BaseRepository implements RoleRepositoryInterface
 {

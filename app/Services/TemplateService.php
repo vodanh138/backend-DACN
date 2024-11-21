@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Repositories\Interfaces\PostRepositoryInterface;
 use App\Services\Interfaces\TemplateServiceInterface;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Interfaces\UserRepositoryInterface;
@@ -15,10 +16,12 @@ class TemplateService implements TemplateServiceInterface
     use ApiResponse;
     protected $userRepository;
     protected $roleRepository;
+    protected $postRepository;
 
     public function __construct(
         UserRepositoryInterface $userRepository,
         RoleRepositoryInterface $roleRepository,
+        PostRepositoryInterface $postRepository,
     ) {
         $this->userRepository = $userRepository;
         $this->roleRepository = $roleRepository;
@@ -97,8 +100,15 @@ class TemplateService implements TemplateServiceInterface
             'user'=> $user,
         ]);
     }
-    public function getPost(){
-        DB::connection('mongodb')->table('collection_name')->get();
+    public function getPost()
+    {
+        try {
+            return $this->responseSuccess([
+                'templates' => $this->postRepository->getAllTemplate(),
+            ], __('messages.allTemp-T'));
+        } catch (\Exception $e) {
+            return $this->responseFail(__('messages.allTemp-F'));
+        }
     }
     public function uploadCoverphoto($request){
         $user = $this->userRepository->findLoggedUser();
