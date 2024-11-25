@@ -25,6 +25,7 @@ class TemplateService implements TemplateServiceInterface
     ) {
         $this->userRepository = $userRepository;
         $this->roleRepository = $roleRepository;
+        $this->postRepository = $postRepository;
     }
     public function registerProcessing($username, $password)
     {
@@ -35,9 +36,9 @@ class TemplateService implements TemplateServiceInterface
         DB::beginTransaction();
         try {
             $user = $this->userRepository->createUser(
-                    $username,
-                    $password
-                );
+                $username,
+                $password
+            );
             if (!$user) {
                 return $this->responseFail(__('messages.userCreate-F'));
             }
@@ -52,67 +53,73 @@ class TemplateService implements TemplateServiceInterface
             [
                 'user' => $user,
             ],
-            __('messages.tempCreate-T')
+            __('messages.userCreate-T')
         );
     }
     public function loginProcessing($username, $password)
     {
         if (Auth::attempt(['username' => $username, 'password' => $password])) {
             $user = $this->userRepository->findLoggedUser();
-            try {
-                $token = $user->createToken('auth_token')->plainTextToken;
-            } catch (\Exception $e) {
-                return $this->responseFail($e->getMessage());
+            if ($user) {
+                try {
+                    $token = $user->createToken('auth_token')->plainTextToken;
+                } catch (\Exception $e) {
+                    return $this->responseFail($e->getMessage());
+                }
+                return $this->responseSuccess(
+                    [
+                        'status' => 'success',
+                        'access_token' => $token,
+                        'token_type' => 'Bearer',
+                    ],
+                    __('messages.login-T')
+                );
             }
-            return $this->responseSuccess(
-                [
-                    'status' => 'success',
-                    'access_token' => $token,
-                    'token_type' => 'Bearer',
-                ],
-                __('messages.login-T')
-            );
         } else {
             return $this->responseFail(__('messages.login-F'));
         }
     }
-    public function editName($lastname, $firstname)
-    {
-        $user = $this->userRepository->findLoggedUser();
-        if ($user) {
-            try {
-                $user->update([
-                    'lastname' => $lastname,
-                    'firstname' => $firstname,
-                    'name' => $lastname . ' '. $firstname,
-                ]);
-                return $this->responseSuccess([
-                    'user'=> $user,
-                ],__('messages.editName-T'));
-            } catch (\Exception $e) {
-                return $this->responseFail(__('messages.editName-F'));
-            }
-        }
-    }
-    public function viewProfile(){
-        $user = $this->userRepository->findLoggedUser();
-        return $this->responseSuccess([
-            'user'=> $user,
-        ]);
-    }
+
+
+    //Post
     public function getPost()
     {
         try {
             return $this->responseSuccess([
-                'templates' => $this->postRepository->getAllTemplate(),
+                'templates' => $this->postRepository->getHomePage(),
             ], __('messages.allTemp-T'));
         } catch (\Exception $e) {
             return $this->responseFail(__('messages.allTemp-F'));
         }
     }
-    public function uploadCoverphoto($request){
+    public function upPost($title, $content, $image)
+    {
         $user = $this->userRepository->findLoggedUser();
-        if ($request->hasFile('image')) {
+        if ($user) {
+            $post = $this->postRepository->createPost(
+                $title,
+                $content,
+                $image,
+                $user->id
+            );
+            if (!$post) {
+                return $this->responseFail(__('messages.userCreate-F'));
+            }
+            return $this->responseSuccess(
+                [
+                    'post' => $post,
+                ],
+                __('messages.userCreate-T')
+            );
+        }
+        return $this->responseFail(__('messages.userCreate-F'));
+    }
+
+    //Profile
+    public function uploadCoverphoto($request)
+    {
+        $user = $this->userRepository->findLoggedUser();
+        if ($request->hasFile('image') && $user) {
             try {
                 $image = $request->file('image');
                 $imageName = '/images/' . time() . '.' . $image->getClientOriginalExtension();
@@ -136,14 +143,15 @@ class TemplateService implements TemplateServiceInterface
         }
         return $this->responseFail(__('messages.avaEdit-F'));
     }
-    public function uploadAvatar($request){
+    public function uploadAvatar($request)
+    {
         $user = $this->userRepository->findLoggedUser();
-        
-        if ($request->hasFile('image')) {
+
+        if ($request->hasFile('image') && $user) {
             try {
                 $image = $request->file('image');
                 $imageName = '/images/' . time() . '.' . $image->getClientOriginalExtension();
-                
+
                 $oldImage = $user->ava;
                 if ($oldImage && $oldImage != '/images/default-ava.png') {
                     $oldImagePath = public_path() . '/' . $oldImage;
@@ -160,9 +168,34 @@ class TemplateService implements TemplateServiceInterface
             } catch (\Exception $e) {
                 return $this->responseFail(__('messages.avaEdit-F'));
             }
+        } else
+
+            return $this->responseFail(__('messages.avaEdit-F'));
+    }
+    public function editName($lastname, $firstname)
+    {
+        $user = $this->userRepository->findLoggedUser();
+        if ($user) {
+            try {
+                $user->update([
+                    'lastname' => $lastname,
+                    'firstname' => $firstname,
+                    'name' => $lastname . ' ' . $firstname,
+                ]);
+                return $this->responseSuccess([
+                    'user' => $user,
+                ], __('messages.editName-T'));
+            } catch (\Exception $e) {
+                return $this->responseFail(__('messages.editName-F'));
+            }
         }
-        else
-            
-        return $this->responseFail(__('messages.avaEdit-F'));
+    }
+    public function viewProfile()
+    {
+        $user = $this->userRepository->findLoggedUser();
+        if ($user)
+            return $this->responseSuccess([
+                'user' => $user,
+            ]);
     }
 }

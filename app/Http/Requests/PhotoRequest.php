@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class PhotoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,17 +22,17 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|string',
-            'password' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'username.required' => __('validation.required',['attribute' => 'username']),
-            'username.string' => __('validation.string',['attribute' => 'username']),
-            'password.required' => __('validation.required',['attribute' => 'password']),
+            'image.required' => __('validation.required', ['attribute' => 'image']),
+            'image.image' => __('validation.image', ['attribute' => 'image']),
+            'image.mimes' => __('validation.mimes', ['attribute' => 'image', 'values' => 'jpeg, png, jpg, gif']),
+            'image.max' => __('validation.max.file', ['attribute' => 'image', 'max' => '2 MB']),
         ];
     }
 }

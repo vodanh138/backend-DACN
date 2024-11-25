@@ -6,13 +6,17 @@ use App\Http\Controllers\UserController;
 Route::get('/not-authorized', [UserController::class, 'notLoggedIn'])->name('Not-Loggedin');
 Route::post('/login', [UserController::class, 'loginProcessing'])->name('login');
 Route::post('/register', [UserController::class, 'registerProcessing']);
-Route::get('/post', [UserController::class, 'getpost']);
-
+Route::post('/post', [UserController::class, 'uppost']);//Create Post
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/profile', [UserController::class, 'viewProfile']);
+    //Post
+    Route::get('/post', [UserController::class, 'getpost']);//View Post
     
-    Route::put('/profile', [UserController::class, 'editName']);
+
+    //Profile
+    Route::get('/profile', [UserController::class, 'viewProfile']);//View profile
+    Route::put('/profile', [UserController::class, 'editName']);//Edit name
+    Route::post('/upload/coverphoto', [UserController::class, 'uploadCoverphoto']);//Edit Coverphoto
+    Route::post('/upload/avatar', [UserController::class, 'uploadAvatar']);//Edit Avatar
+
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
-    Route::post('/upload/coverphoto', [UserController::class, 'uploadCoverphoto']);
-    Route::post('/upload/avatar', [UserController::class, 'uploadAvatar']);
 });

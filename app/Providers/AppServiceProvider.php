@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Repositories\BaseRepository;
+use App\Repositories\Interfaces\PostRepositoryInterface;
 use App\Repositories\Interfaces\RepositoryInterface;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Repositories\PostRepository;
 use App\Repositories\RoleRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\UserRepository;
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(TemplateServiceInterface::class, TemplateService::class);
         $this->app->singleton(UserRepositoryInterface::class, UserRepository::class);
         $this->app->singleton(RoleRepositoryInterface::class, RoleRepository::class);
+        $this->app->singleton(PostRepositoryInterface::class, PostRepository::class);
         $this->app->singleton(RepositoryInterface::class, BaseRepository::class);
     }
 

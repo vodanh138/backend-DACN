@@ -30,9 +30,10 @@ class NameRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'username.required' => __('validation.required'),
-            'username.string' => __('validation.string'),
-            'password.required' => __('validation.required'),
+            'lastname.required' => __('validation.required',['attribute' => 'lastname']),
+            'lastname.string' => __('validation.string',['attribute' => 'lastname']),
+            'firstname.required' => __('validation.required',['attribute' => 'firstname']),
+            'firstname.string' => __('validation.string',['attribute' => 'firstname']),
         ];
     }
 }

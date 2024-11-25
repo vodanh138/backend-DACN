@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\NameRequest;
+use App\Http\Requests\PhotoRequest;
 use App\Services\Interfaces\TemplateServiceInterface;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -37,6 +38,26 @@ class usercontroller extends Controller
             return $this->responseFail($e->getMessage(), 500);
         }
     }
+
+    //Post
+    public function getPost()
+    {
+        return $this->UserService->getPost();
+    }
+    public function upPost(Request $request)
+    {
+        return $this->UserService->upPost($request->title, $request->content, $request->image);
+    }
+
+    //Profile
+    public function uploadCoverphoto(PhotoRequest $request)
+    {
+        return $this->UserService->uploadCoverphoto($request);
+    }
+    public function uploadAvatar(PhotoRequest $request)
+    {
+        return $this->UserService->uploadAvatar($request);
+    }
     public function editName(NameRequest $request)
     {
         return $this->UserService->editName($request->lastname, $request->firstname);
@@ -44,17 +65,5 @@ class usercontroller extends Controller
     public function viewProfile()
     {
         return $this->UserService->viewProfile();
-    }
-    public function getPost()
-    {
-        return $this->UserService->getPost();
-    }
-    public function uploadCoverphoto(Request $request)
-    {
-        return $this->UserService->uploadCoverphoto($request);
-    }
-    public function uploadAvatar(Request $request)
-    {
-        return $this->UserService->uploadAvatar($request);
     }
 }

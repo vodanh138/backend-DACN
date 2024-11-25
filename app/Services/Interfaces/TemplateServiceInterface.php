@@ -9,6 +9,7 @@ interface TemplateServiceInterface
     public function editName($lastname, $firstname);
     public function viewProfile();
     public function getPost();
+    public function upPost($title, $content, $image);
     public function uploadCoverphoto($request);
     public function uploadAvatar($request);
 }
