@@ -85,21 +85,34 @@ class TemplateService implements TemplateServiceInterface
     public function getPost()
     {
         try {
+            $posts = $this->postRepository->getHomePage();
+            $posts = $posts->map(function ($post) {
+                return [
+                    'content' => $post->content,
+                    'user_name' => $post->user->name ?? 'Unknown',
+                    'user_ava' => $post->user->ava ?? 'Unknown',
+                    'image' => $post->image,
+                    'created_at' => $post->created_at,
+                ];
+            });
+
             return $this->responseSuccess([
-                'templates' => $this->postRepository->getHomePage(),
+                'posts' => $posts,
             ], __('messages.allTemp-T'));
         } catch (\Exception $e) {
             return $this->responseFail(__('messages.allTemp-F'));
         }
     }
-    public function upPost($title, $content, $image)
+    public function upPost($request)
     {
         $user = $this->userRepository->findLoggedUser();
-        if ($user) {
+        if ($request->hasFile('image') && $user) {
+            $image = $request->file('image');
+            $imageName = '/images/' . time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images'), $imageName);
             $post = $this->postRepository->createPost(
-                $title,
-                $content,
-                $image,
+                $request->content,
+                $imageName,
                 $user->id
             );
             if (!$post) {
@@ -107,7 +120,13 @@ class TemplateService implements TemplateServiceInterface
             }
             return $this->responseSuccess(
                 [
-                    'post' => $post,
+                    'posts' => [
+                        'content' => $post->content,
+                        'user_name' => $post->user->name ?? 'Unknown',
+                        'user_ava' => $post->user->ava ?? 'Unknown',
+                        'image' => $post->image,
+                        'created_at' => $post->created_at,
+                    ]
                 ],
                 __('messages.userCreate-T')
             );

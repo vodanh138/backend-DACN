@@ -18,7 +18,8 @@ class usercontroller extends Controller
     {
         $this->UserService = $UserService;
     }
-    public function notLoggedIn(){
+    public function notLoggedIn()
+    {
         return $this->responseFail(__('messages.unauthor'));
     }
     public function registerProcessing(LoginRequest $request)
@@ -46,7 +47,7 @@ class usercontroller extends Controller
     }
     public function upPost(Request $request)
     {
-        return $this->UserService->upPost($request->title, $request->content, $request->image);
+        return $this->UserService->upPost($request);
     }
 
     //Profile

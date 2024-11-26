@@ -12,21 +12,20 @@ class PostRepository extends BaseRepository implements PostRepositoryInterface
         return Post::class;
     }
     public function getHomePage()
-    {
-        return $this->model
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get();
-    }
+{
+    return $this->model
+        ->with('user:id,name,ava')
+        ->orderBy('created_at', 'desc')
+        ->limit(10)
+        ->get();
+}
     public function createPost(
-        $title,
         $content,
         $image,
         $user_id
     ) {
         return $this->model->create(
             [
-                'title' => $title,
                 'content' => $content,
                 'user_id' => $user_id,
                 'image' => $image,

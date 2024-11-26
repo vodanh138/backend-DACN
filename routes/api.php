@@ -6,11 +6,11 @@ use App\Http\Controllers\UserController;
 Route::get('/not-authorized', [UserController::class, 'notLoggedIn'])->name('Not-Loggedin');
 Route::post('/login', [UserController::class, 'loginProcessing'])->name('login');
 Route::post('/register', [UserController::class, 'registerProcessing']);
-Route::post('/post', [UserController::class, 'uppost']);//Create Post
+
 Route::middleware('auth:sanctum')->group(function () {
     //Post
     Route::get('/post', [UserController::class, 'getpost']);//View Post
-    
+    Route::post('/post', [UserController::class, 'uppost']);//Create Post
 
     //Profile
     Route::get('/profile', [UserController::class, 'viewProfile']);//View profile
