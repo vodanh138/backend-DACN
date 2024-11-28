@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\Interfaces\PostRepositoryInterface;
-use App\Services\Interfaces\TemplateServiceInterface;
+use App\Services\Interfaces\UserServiceInterface;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
@@ -11,21 +11,18 @@ use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\DB;
 use MongoDB\Client;
 
-class TemplateService implements TemplateServiceInterface
+class UserService implements UserServiceInterface
 {
     use ApiResponse;
     protected $userRepository;
     protected $roleRepository;
-    protected $postRepository;
 
     public function __construct(
         UserRepositoryInterface $userRepository,
         RoleRepositoryInterface $roleRepository,
-        PostRepositoryInterface $postRepository,
     ) {
         $this->userRepository = $userRepository;
         $this->roleRepository = $roleRepository;
-        $this->postRepository = $postRepository;
     }
     public function registerProcessing($username, $password)
     {
@@ -80,60 +77,6 @@ class TemplateService implements TemplateServiceInterface
         }
     }
 
-
-    //Post
-    public function getPost()
-    {
-        try {
-            $posts = $this->postRepository->getHomePage();
-            $posts = $posts->map(function ($post) {
-                return [
-                    'content' => $post->content,
-                    'user_name' => $post->user->name ?? 'Unknown',
-                    'user_ava' => $post->user->ava ?? 'Unknown',
-                    'image' => $post->image,
-                    'created_at' => $post->created_at,
-                ];
-            });
-
-            return $this->responseSuccess([
-                'posts' => $posts,
-            ], __('messages.allTemp-T'));
-        } catch (\Exception $e) {
-            return $this->responseFail(__('messages.allTemp-F'));
-        }
-    }
-    public function upPost($request)
-    {
-        $user = $this->userRepository->findLoggedUser();
-        if ($request->hasFile('image') && $user) {
-            $image = $request->file('image');
-            $imageName = '/images/' . time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $imageName);
-            $post = $this->postRepository->createPost(
-                $request->content,
-                $imageName,
-                $user->id
-            );
-            if (!$post) {
-                return $this->responseFail(__('messages.userCreate-F'));
-            }
-            return $this->responseSuccess(
-                [
-                    'posts' => [
-                        'content' => $post->content,
-                        'user_name' => $post->user->name ?? 'Unknown',
-                        'user_ava' => $post->user->ava ?? 'Unknown',
-                        'image' => $post->image,
-                        'created_at' => $post->created_at,
-                    ]
-                ],
-                __('messages.userCreate-T')
-            );
-        }
-        return $this->responseFail(__('messages.userCreate-F'));
-    }
-
     //Profile
     public function uploadCoverphoto($request)
     {
@@ -155,7 +98,7 @@ class TemplateService implements TemplateServiceInterface
                 $user->update([
                     'coverphoto' => $imageName,
                 ]);
-                return $this->responseSuccess(__('messages.avaEdit-T'));
+                return $this->responseSuccess([], __('messages.avaEdit-T'));
             } catch (\Exception $e) {
                 return $this->responseFail(__('messages.avaEdit-F'));
             }
@@ -183,13 +126,13 @@ class TemplateService implements TemplateServiceInterface
                 $user->update([
                     'ava' => $imageName,
                 ]);
-                return $this->responseSuccess(__('messages.avaEdit-T'));
+                return $this->responseSuccess([], __('messages.coverEdit-T'));
             } catch (\Exception $e) {
-                return $this->responseFail(__('messages.avaEdit-F'));
+                return $this->responseFail(__('messages.coverEdit-F'));
             }
         } else
 
-            return $this->responseFail(__('messages.avaEdit-F'));
+            return $this->responseFail(__('messages.coverEdit-F'));
     }
     public function editName($lastname, $firstname)
     {

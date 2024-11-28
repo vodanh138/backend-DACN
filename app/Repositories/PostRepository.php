@@ -12,13 +12,13 @@ class PostRepository extends BaseRepository implements PostRepositoryInterface
         return Post::class;
     }
     public function getHomePage()
-{
-    return $this->model
-        ->with('user:id,name,ava')
-        ->orderBy('created_at', 'desc')
-        ->limit(10)
-        ->get();
-}
+    {
+        return $this->model
+            ->with('user:id,name,ava')
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+    }
     public function createPost(
         $content,
         $image,
@@ -32,5 +32,11 @@ class PostRepository extends BaseRepository implements PostRepositoryInterface
                 'view' => 0,
             ]
         );
+    }
+    public function findPost($post_id)
+    {
+        return $this->model
+            ->where("id", $post_id)
+            ->first();
     }
 }

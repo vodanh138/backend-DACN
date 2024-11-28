@@ -5,16 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\NameRequest;
 use App\Http\Requests\PhotoRequest;
-use App\Services\Interfaces\TemplateServiceInterface;
+use App\Services\Interfaces\UserServiceInterface;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 
-class usercontroller extends Controller
+class Usercontroller extends Controller
 {
     use ApiResponse;
 
     protected $UserService;
-    public function __construct(TemplateServiceInterface $UserService)
+    public function __construct(UserServiceInterface $UserService)
     {
         $this->UserService = $UserService;
     }
@@ -38,16 +38,6 @@ class usercontroller extends Controller
         } catch (\Exception $e) {
             return $this->responseFail($e->getMessage(), 500);
         }
-    }
-
-    //Post
-    public function getPost()
-    {
-        return $this->UserService->getPost();
-    }
-    public function upPost(Request $request)
-    {
-        return $this->UserService->upPost($request);
     }
 
     //Profile

@@ -10,4 +10,5 @@ interface PostRepositoryInterface extends RepositoryInterface
         $image,
         $user_id
     );
+    public function findPost($post_id);
 }

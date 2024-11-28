@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Likecontroller;
+use App\Http\Controllers\Postcontroller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -9,8 +11,15 @@ Route::post('/register', [UserController::class, 'registerProcessing']);
 
 Route::middleware('auth:sanctum')->group(function () {
     //Post
-    Route::get('/post', [UserController::class, 'getpost']);//View Post
-    Route::post('/post', [UserController::class, 'uppost']);//Create Post
+    Route::get('/post', [Postcontroller::class, 'getPost']);//View Post
+    Route::post('/post', [PostController::class, 'upPost']);//Create Post
+
+    //Like
+    Route::post('/post/{post_id}/like', [Likecontroller::class, 'postLike']);//Like
+    Route::delete('/post/{post_id}/like', [LikeController::class, 'postUnlike']);//Unlike
+
+    Route::post('/comment/{comment_id}/like', [Likecontroller::class, 'commentLike']);//Like
+    Route::delete('/comment/{comment_id}/like', [LikeController::class, 'commentUnlike']);//Unlike
 
     //Profile
     Route::get('/profile', [UserController::class, 'viewProfile']);//View profile
