@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Commentcontroller;
 use App\Http\Controllers\Likecontroller;
 use App\Http\Controllers\Postcontroller;
 use Illuminate\Http\Request;
@@ -26,6 +27,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [UserController::class, 'editName']);//Edit name
     Route::post('/upload/coverphoto', [UserController::class, 'uploadCoverphoto']);//Edit Coverphoto
     Route::post('/upload/avatar', [UserController::class, 'uploadAvatar']);//Edit Avatar
+
+    //Comment
+    Route::post('/comment/{post_id}', [Commentcontroller::class, 'comment']);//Create Comment
+    Route::get('/comment/{post_id}', [Commentcontroller::class, 'getComment']);//Get Comment
 
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 });

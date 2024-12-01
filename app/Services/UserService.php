@@ -2,14 +2,12 @@
 
 namespace App\Services;
 
-use App\Repositories\Interfaces\PostRepositoryInterface;
 use App\Services\Interfaces\UserServiceInterface;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\DB;
-use MongoDB\Client;
 
 class UserService implements UserServiceInterface
 {

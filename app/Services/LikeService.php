@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Repositories\Interfaces\LikeRepositoryInterface;
-use App\Repositories\Interfaces\PostRepositoryInterface;
 use App\Services\Interfaces\LikeServiceInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Traits\ApiResponse;
@@ -52,6 +51,22 @@ class LikeService implements LikeServiceInterface
     }
     public function unlike($post_id, $comment_id)
     {
-        return $this->responseFail(__('messages.unlike-F'));
+        try {
+            $user = $this->userRepository->findLoggedUser();
+            if ($user) {
+                $like = $this->likeRepository->findLike(
+                    post_id: $post_id,
+                    user_id: $user->id,
+                    comment_id: $comment_id
+                );
+                if ($like) {
+                    $like->delete();
+                    return $this->responseSuccess([],__('messages.unlike-T'));
+                }
+            }
+            return $this->responseFail(message: __(key: 'messages.unlike-F'));
+        } catch (\Exception $e) {
+            return $this->responseFail(__('messages.unlike-F'));
+        }
     }
 }

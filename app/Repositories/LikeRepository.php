@@ -17,10 +17,10 @@ class LikeRepository extends BaseRepository implements LikeRepositoryInterface
         $comment_id
     ) {
         return $this->model
-        ->where('post_id', $post_id)
-        ->where('user_id', $user_id)
-        ->where('comment_id', $comment_id)
-        ->first();
+            ->where('post_id', $post_id)
+            ->where('user_id', $user_id)
+            ->where('comment_id', $comment_id)
+            ->first();
     }
     public function createLike(
         $post_id,
@@ -34,5 +34,17 @@ class LikeRepository extends BaseRepository implements LikeRepositoryInterface
                 'comment_id' => $comment_id,
             ]
         );
+    }
+    public function totalLike(
+        $post_id,
+        $comment_id
+    ) {
+        if ($comment_id == null)
+            return $this->model
+                ->where('post_id', $post_id)
+                ->count();
+        return $this->model
+            ->where('comment_id', $comment_id)
+            ->count();
     }
 }

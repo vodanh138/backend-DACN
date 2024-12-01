@@ -14,4 +14,8 @@ interface LikeRepositoryInterface extends RepositoryInterface
         $user_id,
         $comment_id
     );
+    public function totalLike(
+        $post_id,
+        $comment_id
+    );
 }
