@@ -43,4 +43,8 @@ class PostRepository extends BaseRepository implements PostRepositoryInterface
     {
         return $this->model->where('content', 'like', "%{$content}%")->get();
     }
+    public function getPostsBelongTo($id)
+    {
+        return $this->model->where('user_id', $id)->get();
+    }
 }

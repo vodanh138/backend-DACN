@@ -13,4 +13,7 @@ interface CommentRepositoryInterface extends RepositoryInterface
     public function getComment(
         $post_id
     );
+    public function totalComment(
+        $post_id
+    );
 }

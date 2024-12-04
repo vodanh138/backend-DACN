@@ -33,4 +33,11 @@ class CommentRepository extends BaseRepository implements CommentRepositoryInter
         ->where("post_id", $post_id)
         ->get();
     }
+    public function totalComment(
+        $post_id
+    ) {
+        return $this->model
+        ->where("post_id", $post_id)
+        ->count();
+    }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Repositories\Interfaces\CommentRepositoryInterface;
+use App\Repositories\Interfaces\LikeRepositoryInterface;
 use App\Repositories\Interfaces\PostRepositoryInterface;
 use App\Services\Interfaces\UserServiceInterface;
 use Illuminate\Support\Facades\Auth;
@@ -16,21 +18,26 @@ class UserService implements UserServiceInterface
     protected $userRepository;
     protected $roleRepository;
     protected $postRepository;
-
+    protected $likeRepository;
+    protected $commentRepository;
     public function __construct(
         UserRepositoryInterface $userRepository,
         RoleRepositoryInterface $roleRepository,
         PostRepositoryInterface $postRepository,
+        LikeRepositoryInterface $likeRepository,
+        CommentRepositoryInterface $commentRepository,
     ) {
         $this->userRepository = $userRepository;
-        $this->postRepository = $postRepository;
+        $this->likeRepository = $likeRepository;
         $this->roleRepository = $roleRepository;
+        $this->postRepository = $postRepository;
+        $this->commentRepository = $commentRepository;
     }
     public function registerProcessing($username, $password)
     {
         $user = $this->userRepository->getUserByName($username);
         if ($user) {
-            return $this->responseFail(__('validation.unique'));
+            return $this->responseFail(__('validation.unique',['attribute' => 'username']));
         }
         DB::beginTransaction();
         try {
@@ -157,10 +164,39 @@ class UserService implements UserServiceInterface
     public function viewProfile()
     {
         $user = $this->userRepository->findLoggedUser();
-        if ($user)
+        if ($user) {
+            $posts = $this->postRepository->getPostsBelongTo($user->id);
+            $posts = $posts->map(function ($post) {
+                $user = $this->userRepository->findLoggedUser();
+                $isLiked = false;
+                if ($user) {
+                    $like = $this->likeRepository->findLike(
+                        post_id: $post->id,
+                        user_id: $user->id,
+                        comment_id: null
+                    );
+                    $likes = $this->likeRepository->totalLike($post->id, null);
+                    $comments = $this->commentRepository->totalComment($post->id);
+                    $isLiked = $like ? true : false;
+                }
+                return [
+                    'id' => $post->id,
+                    'content' => $post->content,
+                    'user_name' => $post->user->name ?? 'Unknown',
+                    'user_ava' => $post->user->ava ?? 'Unknown',
+                    'image' => $post->image,
+                    'created_at' => $post->created_at,
+                    'isLiked' => $isLiked,
+                    'likes' => $likes,
+                    'comments' => $comments,
+                ];
+            });
             return $this->responseSuccess([
                 'user' => $user,
+                'posts' => $posts,
             ]);
+        }
+        return $this->responseFail(__('messages.myProfile-F'));
     }
     public function search($request)
     {
@@ -175,16 +211,47 @@ class UserService implements UserServiceInterface
                 'posts' => $posts,
             ]);
         }
+        return $this->responseFail(__('messages.search-F'));
     }
     public function viewFriendProfile($user_id)
     {
         $user = $this->userRepository->findLoggedUser();
-        if ($user)
+        if ($user) {
             $friend = $this->userRepository->getUserById($user_id);
-        return $this->responseSuccess([
-            'name' => $friend->name,
-            'ava' => $friend->ava,
-            'coverphoto' => $friend->coverphoto,
-        ]);
+            $posts = $this->postRepository->getPostsBelongTo($friend->id);
+            $posts = $posts->map(function ($post) {
+                $user = $this->userRepository->findLoggedUser();
+                $isLiked = false;
+                if ($user) {
+                    $like = $this->likeRepository->findLike(
+                        post_id: $post->id,
+                        user_id: $user->id,
+                        comment_id: null
+                    );
+                    $likes = $this->likeRepository->totalLike($post->id, null);
+                    $comments = $this->commentRepository->totalComment($post->id);
+                    $isLiked = $like ? true : false;
+                }
+                return [
+                    'id' => $post->id,
+                    'content' => $post->content,
+                    'user_name' => $post->user->name ?? 'Unknown',
+                    'user_ava' => $post->user->ava ?? 'Unknown',
+                    'image' => $post->image,
+                    'created_at' => $post->created_at,
+                    'isLiked' => $isLiked,
+                    'likes' => $likes,
+                    'comments' => $comments,
+                ];
+            });
+            return $this->responseSuccess([
+                'name' => $friend->name,
+                'ava' => $friend->ava,
+                'coverphoto' => $friend->coverphoto,
+                'posts' => $posts,
+            ]);
+        }
+        return $this->responseFail(__('messages.friendProfile-F'));
+
     }
 }

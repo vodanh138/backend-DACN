@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Repositories\Interfaces\CommentRepositoryInterface;
 use App\Repositories\Interfaces\LikeRepositoryInterface;
 use App\Repositories\Interfaces\PostRepositoryInterface;
 use App\Services\Interfaces\PostServiceInterface;
@@ -14,15 +15,18 @@ class PostService implements PostServiceInterface
     protected $userRepository;
     protected $postRepository;
     protected $likeRepository;
+    protected $commentRepository;
 
     public function __construct(
         UserRepositoryInterface $userRepository,
         PostRepositoryInterface $postRepository,
         LikeRepositoryInterface $likeRepository,
+        CommentRepositoryInterface $commentRepository,
     ) {
         $this->userRepository = $userRepository;
         $this->likeRepository = $likeRepository;
         $this->postRepository = $postRepository;
+        $this->commentRepository = $commentRepository;
     }
 
     //Post
@@ -40,6 +44,7 @@ class PostService implements PostServiceInterface
                         comment_id: null
                     );
                     $likes = $this->likeRepository->totalLike($post->id,null);
+                    $comments = $this->commentRepository->totalComment($post->id);
                     $isLiked = $like ? true : false;
                 }
                 return [
@@ -51,6 +56,7 @@ class PostService implements PostServiceInterface
                     'created_at' => $post->created_at,
                     'isLiked' => $isLiked,
                     'likes' => $likes,
+                    'comments' => $comments,
                 ];
             });
 
