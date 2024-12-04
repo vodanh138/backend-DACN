@@ -23,14 +23,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/comment/{comment_id}/like', [LikeController::class, 'commentUnlike']);//Unlike
 
     //Profile
-    Route::get('/profile', [UserController::class, 'viewProfile']);//View profile
+    Route::get('/profile', [UserController::class, 'viewProfile']);//View my profile
     Route::put('/profile', [UserController::class, 'editName']);//Edit name
     Route::post('/upload/coverphoto', [UserController::class, 'uploadCoverphoto']);//Edit Coverphoto
     Route::post('/upload/avatar', [UserController::class, 'uploadAvatar']);//Edit Avatar
+    Route::get('/profile/{user_id}', [UserController::class, 'viewFriendProfile']);//View friend profile
 
     //Comment
     Route::post('/comment/{post_id}', [Commentcontroller::class, 'comment']);//Create Comment
     Route::get('/comment/{post_id}', [Commentcontroller::class, 'getComment']);//Get Comment
+
+    //Search
+    Route::get('/search', [UserController::class, 'search']);//Search 
 
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 });

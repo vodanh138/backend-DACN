@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Repositories\Interfaces\PostRepositoryInterface;
 use App\Services\Interfaces\UserServiceInterface;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Interfaces\UserRepositoryInterface;
@@ -14,12 +15,15 @@ class UserService implements UserServiceInterface
     use ApiResponse;
     protected $userRepository;
     protected $roleRepository;
+    protected $postRepository;
 
     public function __construct(
         UserRepositoryInterface $userRepository,
         RoleRepositoryInterface $roleRepository,
+        PostRepositoryInterface $postRepository,
     ) {
         $this->userRepository = $userRepository;
+        $this->postRepository = $postRepository;
         $this->roleRepository = $roleRepository;
     }
     public function registerProcessing($username, $password)
@@ -157,5 +161,30 @@ class UserService implements UserServiceInterface
             return $this->responseSuccess([
                 'user' => $user,
             ]);
+    }
+    public function search($request)
+    {
+        $user = $this->userRepository->findLoggedUser();
+        if ($user) {
+            $users = $this->userRepository->getUsersHaveName($request);
+            $posts = $this->postRepository->getPostsHaveContent($request);
+            if (!$users && $posts)
+                return $this->responseSuccess([], __('messages.search-F'));
+            return $this->responseSuccess([
+                'users' => $users,
+                'posts' => $posts,
+            ]);
+        }
+    }
+    public function viewFriendProfile($user_id)
+    {
+        $user = $this->userRepository->findLoggedUser();
+        if ($user)
+            $friend = $this->userRepository->getUserById($user_id);
+        return $this->responseSuccess([
+            'name' => $friend->name,
+            'ava' => $friend->ava,
+            'coverphoto' => $friend->coverphoto,
+        ]);
     }
 }

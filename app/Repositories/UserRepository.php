@@ -37,4 +37,12 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
             ]
         );
     }
+    public function getUsersHaveName($name)
+    {
+        return $this->model->where('name', 'like', "%{$name}%")->where('name', '!=', 'admin')->get();
+    }
+    public function getUserById($id)
+    {
+        return $this->model->where('id', $id)->first();
+    }
 }

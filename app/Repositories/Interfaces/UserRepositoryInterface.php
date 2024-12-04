@@ -10,4 +10,6 @@ interface UserRepositoryInterface extends RepositoryInterface
         $username,
         $password
     );
+    public function getUsersHaveName($name);
+    public function getUserById($id);
 }

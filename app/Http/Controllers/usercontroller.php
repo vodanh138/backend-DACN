@@ -57,4 +57,12 @@ class Usercontroller extends Controller
     {
         return $this->UserService->viewProfile();
     }
+    public function search(Request $request)
+    {
+        return $this->UserService->search($request->search);
+    }
+    public function viewFriendProfile($user_id)
+    {
+        return $this->UserService->viewFriendProfile($user_id);
+    }
 }

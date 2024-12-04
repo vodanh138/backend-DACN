@@ -39,4 +39,8 @@ class PostRepository extends BaseRepository implements PostRepositoryInterface
             ->where("id", $post_id)
             ->first();
     }
+    public function getPostsHaveContent($content)
+    {
+        return $this->model->where('content', 'like', "%{$content}%")->get();
+    }
 }

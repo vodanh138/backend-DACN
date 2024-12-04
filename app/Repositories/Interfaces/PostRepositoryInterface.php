@@ -11,4 +11,5 @@ interface PostRepositoryInterface extends RepositoryInterface
         $user_id
     );
     public function findPost($post_id);
+    public function getPostsHaveContent($content);
 }
