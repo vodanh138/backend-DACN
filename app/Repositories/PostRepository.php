@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Post;
 use App\Repositories\Interfaces\PostRepositoryInterface;
+use Carbon\Carbon;
 
 class PostRepository extends BaseRepository implements PostRepositoryInterface
 {
@@ -11,14 +12,23 @@ class PostRepository extends BaseRepository implements PostRepositoryInterface
     {
         return Post::class;
     }
-    public function getHomePage()
+    public function getHomePage($user_id)
     {
-        return $this->model
+        $oneWeekAgo = Carbon::now()->subWeek();
+        return $this->model::where(function ($query) use ($user_id) {
+            $query->whereIn('user_id', function ($subquery) use ($user_id) {
+                $subquery->select('follow')
+                    ->from('follows')
+                    ->where('user_id', $user_id);
+            })
+                ->orWhere('user_id', $user_id);
+        })
             ->with('user:id,name,ava')
+            ->where('created_at', '>=', $oneWeekAgo)
             ->orderBy('created_at', 'desc')
-            ->limit(10)
             ->get();
     }
+
     public function createPost(
         $content,
         $image,

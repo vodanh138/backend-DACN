@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\Interfaces\CommentRepositoryInterface;
+use App\Repositories\Interfaces\FollowRepositoryInterface;
 use App\Repositories\Interfaces\LikeRepositoryInterface;
 use App\Repositories\Interfaces\PostRepositoryInterface;
 use App\Services\Interfaces\PostServiceInterface;
@@ -16,24 +17,28 @@ class PostService implements PostServiceInterface
     protected $postRepository;
     protected $likeRepository;
     protected $commentRepository;
+    protected $followRepository;
 
     public function __construct(
         UserRepositoryInterface $userRepository,
         PostRepositoryInterface $postRepository,
         LikeRepositoryInterface $likeRepository,
         CommentRepositoryInterface $commentRepository,
+        FollowRepositoryInterface $followRepository,
     ) {
         $this->userRepository = $userRepository;
         $this->likeRepository = $likeRepository;
         $this->postRepository = $postRepository;
         $this->commentRepository = $commentRepository;
+        $this->followRepository = $followRepository;
     }
 
     //Post
     public function getPost()
     {
         try {
-            $posts = $this->postRepository->getHomePage();
+            $user = $this->userRepository->findLoggedUser();
+            $posts = $this->postRepository->getHomePage($user->id);
             $posts = $posts->map(function ($post) {
                 $user = $this->userRepository->findLoggedUser();
                 $isLiked = false;
@@ -50,6 +55,7 @@ class PostService implements PostServiceInterface
                 return [
                     'id' => $post->id,
                     'content' => $post->content,
+                    'user_id' => $post->user->id ?? 'Unknown',
                     'user_name' => $post->user->name ?? 'Unknown',
                     'user_ava' => $post->user->ava ?? 'Unknown',
                     'image' => $post->image,

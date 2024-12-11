@@ -4,7 +4,7 @@ namespace App\Repositories\Interfaces;
 
 interface PostRepositoryInterface extends RepositoryInterface
 {
-    public function getHomePage();
+    public function getHomePage($user_id);
     public function createPost(
         $content,
         $image,

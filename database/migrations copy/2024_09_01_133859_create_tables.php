@@ -20,28 +20,11 @@ return new class extends Migration {
             $table->foreign('sender_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->foreign('receiver_id')->references('user_id')->on('users')->onDelete('cascade');
         });
-        Schema::create('likes', function (Blueprint $table) {
-
-            $table->id('like_id');
-            $table->unsignedBigInteger('post_id')->nullable();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('comment_id')->nullable();
-            
+        Schema::create('follows', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('follow')->constrained()->onDelete('cascade');
             $table->timestamps();
-
-            $table->foreign('post_id')->references('post_id')->on('posts')->onDelete('cascade');
-            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
-            $table->foreign('comment_id')
-            ->references('comment_id')
-            ->on('comments')
-            ->onDelete('cascade');
-        });
-        Schema::create('followers', function (Blueprint $table) {
-            $table->id('follower_id');
-            $table->unsignedBigInteger('user_id');
-            $table->timestamps();
-
-            $table->foreign('follower_id')->references('user_id')->on('users')->onDelete('cascade');
         });
     }
 

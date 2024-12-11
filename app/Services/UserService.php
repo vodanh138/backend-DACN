@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\Interfaces\CommentRepositoryInterface;
+use App\Repositories\Interfaces\FollowRepositoryInterface;
 use App\Repositories\Interfaces\LikeRepositoryInterface;
 use App\Repositories\Interfaces\PostRepositoryInterface;
 use App\Services\Interfaces\UserServiceInterface;
@@ -20,24 +21,27 @@ class UserService implements UserServiceInterface
     protected $postRepository;
     protected $likeRepository;
     protected $commentRepository;
+    protected $followRepository;
     public function __construct(
         UserRepositoryInterface $userRepository,
         RoleRepositoryInterface $roleRepository,
         PostRepositoryInterface $postRepository,
         LikeRepositoryInterface $likeRepository,
         CommentRepositoryInterface $commentRepository,
+        FollowRepositoryInterface $followRepository,
     ) {
         $this->userRepository = $userRepository;
         $this->likeRepository = $likeRepository;
         $this->roleRepository = $roleRepository;
         $this->postRepository = $postRepository;
         $this->commentRepository = $commentRepository;
+        $this->followRepository = $followRepository;
     }
     public function registerProcessing($username, $password)
     {
         $user = $this->userRepository->getUserByName($username);
         if ($user) {
-            return $this->responseFail(__('validation.unique',['attribute' => 'username']));
+            return $this->responseFail(__('validation.unique', ['attribute' => 'username']));
         }
         DB::beginTransaction();
         try {
@@ -56,9 +60,7 @@ class UserService implements UserServiceInterface
             return $this->responseFail(__('messages.errorAddingUser'), 500);
         }
         return $this->responseSuccess(
-            [
-                'user' => $user,
-            ],
+            [],
             __('messages.userCreate-T')
         );
     }
@@ -107,12 +109,12 @@ class UserService implements UserServiceInterface
                 $user->update([
                     'coverphoto' => $imageName,
                 ]);
-                return $this->responseSuccess([], __('messages.avaEdit-T'));
+                return $this->responseSuccess([], __('messages.coverEdit-T'));
             } catch (\Exception $e) {
-                return $this->responseFail(__('messages.avaEdit-F'));
+                return $this->responseFail(__('messages.coverEdit-F'));
             }
         }
-        return $this->responseFail(__('messages.avaEdit-F'));
+        return $this->responseFail(__('messages.coverEdit-F'));
     }
     public function uploadAvatar($request)
     {
@@ -135,13 +137,13 @@ class UserService implements UserServiceInterface
                 $user->update([
                     'ava' => $imageName,
                 ]);
-                return $this->responseSuccess([], __('messages.coverEdit-T'));
+                return $this->responseSuccess([], __('messages.avaEdit-T'));
             } catch (\Exception $e) {
-                return $this->responseFail(__('messages.coverEdit-F'));
+                return $this->responseFail(__('messages.avaEdit-F'));
             }
         } else
 
-            return $this->responseFail(__('messages.coverEdit-F'));
+            return $this->responseFail(__('messages.avaEdit-F'));
     }
     public function editName($lastname, $firstname)
     {
@@ -153,9 +155,7 @@ class UserService implements UserServiceInterface
                     'firstname' => $firstname,
                     'name' => $lastname . ' ' . $firstname,
                 ]);
-                return $this->responseSuccess([
-                    'user' => $user,
-                ], __('messages.editName-T'));
+                return $this->responseSuccess([], __('messages.editName-T'));
             } catch (\Exception $e) {
                 return $this->responseFail(__('messages.editName-F'));
             }
@@ -165,6 +165,8 @@ class UserService implements UserServiceInterface
     {
         $user = $this->userRepository->findLoggedUser();
         if ($user) {
+            $following = $this->followRepository->totalFollow($user->id);
+            $follower = $this->followRepository->totalFollower($user->id);
             $posts = $this->postRepository->getPostsBelongTo($user->id);
             $posts = $posts->map(function ($post) {
                 $user = $this->userRepository->findLoggedUser();
@@ -182,6 +184,7 @@ class UserService implements UserServiceInterface
                 return [
                     'id' => $post->id,
                     'content' => $post->content,
+                    'user_id' => $post->user->id ?? 'Unknown',
                     'user_name' => $post->user->name ?? 'Unknown',
                     'user_ava' => $post->user->ava ?? 'Unknown',
                     'image' => $post->image,
@@ -194,6 +197,8 @@ class UserService implements UserServiceInterface
             return $this->responseSuccess([
                 'user' => $user,
                 'posts' => $posts,
+                'following' => $following,
+                'follower' => $follower,
             ]);
         }
         return $this->responseFail(__('messages.myProfile-F'));
@@ -217,7 +222,11 @@ class UserService implements UserServiceInterface
     {
         $user = $this->userRepository->findLoggedUser();
         if ($user) {
+            $following = $this->followRepository->totalFollow($user_id);
+            $follower = $this->followRepository->totalFollower($user_id);
             $friend = $this->userRepository->getUserById($user_id);
+            $follow = $this->followRepository->findFollow($user->id, $friend->id);
+            $isFollow = $follow ? true : false;
             $posts = $this->postRepository->getPostsBelongTo($friend->id);
             $posts = $posts->map(function ($post) {
                 $user = $this->userRepository->findLoggedUser();
@@ -235,6 +244,7 @@ class UserService implements UserServiceInterface
                 return [
                     'id' => $post->id,
                     'content' => $post->content,
+                    'user_id' => $post->user->id ?? 'Unknown',
                     'user_name' => $post->user->name ?? 'Unknown',
                     'user_ava' => $post->user->ava ?? 'Unknown',
                     'image' => $post->image,
@@ -249,6 +259,9 @@ class UserService implements UserServiceInterface
                 'ava' => $friend->ava,
                 'coverphoto' => $friend->coverphoto,
                 'posts' => $posts,
+                'isFollow' => $isFollow,
+                'following' => $following,
+                'follower' => $follower,
             ]);
         }
         return $this->responseFail(__('messages.friendProfile-F'));

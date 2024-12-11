@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Commentcontroller;
+use App\Http\Controllers\Followcontroller;
 use App\Http\Controllers\Likecontroller;
 use App\Http\Controllers\Postcontroller;
 use Illuminate\Http\Request;
@@ -35,6 +36,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Search
     Route::get('/search', [UserController::class, 'search']);//Search 
+
+    //Follow
+    Route::post('/follow/{user_id}', [Followcontroller::class, 'follow']);//Follow
+    Route::delete('/follow/{user_id}', [Followcontroller::class, 'unfollow']);//Unfollow
 
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 });
