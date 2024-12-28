@@ -55,6 +55,6 @@ class PostRepository extends BaseRepository implements PostRepositoryInterface
     }
     public function getPostsBelongTo($id)
     {
-        return $this->model->where('user_id', $id)->get();
+        return $this->model->where('user_id', $id)->orderBy('created_at', 'desc')->get();
     }
 }
