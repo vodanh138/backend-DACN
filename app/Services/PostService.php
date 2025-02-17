@@ -102,6 +102,7 @@ class PostService implements PostServiceInterface
                             'image' => $post->image,
                             'created_at' => $post->created_at,
                             'likes' => 0,
+                            'comments' => 0,
                         ]
                     ],
                     __('messages.createPost-T')
