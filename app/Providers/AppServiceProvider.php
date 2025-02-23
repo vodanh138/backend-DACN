@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Repositories\BaseRepository;
+use App\Repositories\ChatRepository;
 use App\Repositories\CommentRepository;
 use App\Repositories\FollowRepository;
+use App\Repositories\Interfaces\ChatRepositoryInterface;
 use App\Repositories\Interfaces\CommentRepositoryInterface;
 use App\Repositories\Interfaces\FollowRepositoryInterface;
 use App\Repositories\Interfaces\LikeRepositoryInterface;
@@ -15,8 +17,10 @@ use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\LikeRepository;
 use App\Repositories\PostRepository;
 use App\Repositories\RoleRepository;
+use App\Services\ChatService;
 use App\Services\CommentService;
 use App\Services\FollowService;
+use App\Services\Interfaces\ChatServiceInterface;
 use App\Services\Interfaces\CommentServiceInterface;
 use App\Services\Interfaces\FollowServiceInterface;
 use App\Services\Interfaces\LikeServiceInterface;
@@ -41,6 +45,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(PostServiceInterface::class, PostService::class);
         $this->app->singleton(CommentServiceInterface::class, CommentService::class);
         $this->app->singleton(FollowServiceInterface::class, FollowService::class);
+        $this->app->singleton(ChatServiceInterface::class, ChatService::class);
         
         $this->app->singleton(UserRepositoryInterface::class, UserRepository::class);
         $this->app->singleton(RoleRepositoryInterface::class, RoleRepository::class);
@@ -48,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(LikeRepositoryInterface::class, LikeRepository::class);
         $this->app->singleton(CommentRepositoryInterface::class, CommentRepository::class);
         $this->app->singleton(FollowRepositoryInterface::class, FollowRepository::class);
+        $this->app->singleton(ChatRepositoryInterface::class, ChatRepository::class);
         $this->app->singleton(RepositoryInterface::class, BaseRepository::class);
     }
 

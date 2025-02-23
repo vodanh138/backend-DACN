@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'AI-not-response' => 'AI not response',
     'allTemp-F' => 'Failed to get all template',
     'allTemp-T' => 'Get all template successfully',
     'getPost-F' => 'Failed to load home page',
@@ -50,6 +51,7 @@ return [
     'secDel-T' => 'Section deleted successfully',
     'secEdit-F' => 'Failed to edit section',
     'secEdit-T' => 'Section edited successfully',
+    'sendMessage-F' => 'Failed to send message',
     'showNothing' => 'There is nothing to show',
     'show-T' => 'Show successfully',
     'tempCreate-F' => 'Failed to create template in database',

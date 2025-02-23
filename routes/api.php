@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Chatcontroller;
 use App\Http\Controllers\Commentcontroller;
 use App\Http\Controllers\Followcontroller;
 use App\Http\Controllers\Likecontroller;
@@ -40,6 +41,10 @@ Route::middleware('auth:sanctum')->group(function () {
     //Follow
     Route::post('/follow/{user_id}', [Followcontroller::class, 'follow']);//Follow
     Route::delete('/follow/{user_id}', [Followcontroller::class, 'unfollow']);//Unfollow
+
+    //Chat
+    Route::post('/chatbot', [Chatcontroller::class, 'chatbot']);//Chat with AI
+    //Route::get('/chatbot', [Chatcontroller::class, 'getchatbot']);//Load messages with AI
 
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 });
