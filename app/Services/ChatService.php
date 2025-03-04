@@ -32,7 +32,7 @@ class ChatService implements ChatServiceInterface
                 $apiKey = env('AI_API_KEY');
                 $userMessage = $request->input('message');
                 
-                $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey", [
+                $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey", [
                     "contents" => [
                         ["parts" => [["text" => $userMessage]]]
                     ]
@@ -46,16 +46,6 @@ class ChatService implements ChatServiceInterface
                 } else
                     return $this->responseFail(__('messages.AI-not-response'));
 
-                /*
-                $Chat = $this->ChatRepository->createMessage(
-                    $user->id,
-                    $userMessage
-                );
-                $aiMessageEntry = $this->ChatRepository->createMessage(
-                    'bot',
-                    $aiMessage
-                );
-                */
 
                 return $this->responseSuccess([
                     'user_message' => $userMessage,
