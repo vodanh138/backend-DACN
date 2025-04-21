@@ -1,22 +1,30 @@
 FROM php:8.2-fpm
 
-# Cài đặt các phụ thuộc cần thiết
-RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip git unzip
+# Cài thêm nginx, supervisor
+RUN apt-get update && apt-get install -y \
+    nginx \
+    supervisor \
+    libpng-dev libjpeg-dev libfreetype6-dev zip git unzip curl
 
-# Cài đặt Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Cài extension PHP
+RUN docker-php-ext-install pdo pdo_mysql
 
-# Đặt thư mục làm việc cho container
+# Cài Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Tạo thư mục web
 WORKDIR /var/www
-
-# Sao chép các file ứng dụng của bạn vào container
 COPY . .
-
-# Cài đặt các phụ thuộc PHP với Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Expose port 9000 để PHP-FPM có thể phục vụ HTTP requests
-EXPOSE 9000
+# Copy file config Nginx
+COPY ./nginx.conf /etc/nginx/sites-available/default
 
-# Khởi động php-fpm server
-CMD ["php-fpm", "-F"]
+# Copy file cấu hình supervisor
+COPY ./supervisord.conf /etc/supervisord.conf
+
+# Expose cổng HTTP
+EXPOSE 80
+
+# Lệnh khởi động cả nginx và php-fpm
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
