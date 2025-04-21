@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Providers;
-
+use Illuminate\Support\Facades\Schema;
 use App\Repositories\BaseRepository;
 use App\Repositories\ChatRepository;
 use App\Repositories\CommentRepository;
@@ -37,6 +37,10 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
+    public function boot()
+    {
+        Schema::defaultStringLength(191);
+    }
     public function register(): void
     {
         //
@@ -46,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(CommentServiceInterface::class, CommentService::class);
         $this->app->singleton(FollowServiceInterface::class, FollowService::class);
         $this->app->singleton(ChatServiceInterface::class, ChatService::class);
-        
+
         $this->app->singleton(UserRepositoryInterface::class, UserRepository::class);
         $this->app->singleton(RoleRepositoryInterface::class, RoleRepository::class);
         $this->app->singleton(PostRepositoryInterface::class, PostRepository::class);
@@ -60,8 +64,4 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
-    {
-        //
-    }
 }
