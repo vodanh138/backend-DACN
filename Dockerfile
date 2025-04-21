@@ -1,4 +1,3 @@
-# Thay đổi từ php:8.1-fpm sang php:8.2-fpm
 FROM php:8.2-fpm
 
 # Cài đặt các phụ thuộc cần thiết
@@ -16,8 +15,8 @@ COPY . .
 # Cài đặt các phụ thuộc PHP với Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Cấu hình port
+# Expose port 9000 để PHP-FPM có thể phục vụ HTTP requests
 EXPOSE 9000
 
 # Khởi động php-fpm server
-CMD ["php-fpm"]
+CMD ["php-fpm", "-F"]
