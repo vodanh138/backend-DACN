@@ -1,32 +1,23 @@
-# Sử dụng PHP 8.1 FPM image
-FROM php:8.1-fpm
+# Thay đổi từ php:8.1-fpm sang php:8.2-fpm
+FROM php:8.2-fpm
 
-# Cài đặt các dependencies cần thiết
-RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    git \
-    zip \
-    unzip \
-    curl \
-    libicu-dev \
-    libxml2-dev \
-    && docker-php-ext-configure intl \
-    && docker-php-ext-install intl gd opcache pdo pdo_mysql
+# Cài đặt các phụ thuộc cần thiết
+RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip git unzip
 
 # Cài đặt Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Cài đặt Laravel dependencies
-WORKDIR /app
+# Đặt thư mục làm việc cho container
+WORKDIR /var/www
+
+# Sao chép các file ứng dụng của bạn vào container
 COPY . .
 
-# Cài đặt Composer dependencies
+# Cài đặt các phụ thuộc PHP với Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Expose port for Laravel
+# Cấu hình port
 EXPOSE 9000
 
-# Khởi động PHP-FPM
+# Khởi động php-fpm server
 CMD ["php-fpm"]
