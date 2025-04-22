@@ -7,10 +7,10 @@ use App\Http\Controllers\Likecontroller;
 use App\Http\Controllers\Postcontroller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-Route::get('/not-authorized', [UserController::class, 'notLoggedIn'])->name('Not-Loggedin');
-Route::post('/login', [UserController::class, 'loginProcessing'])->name('login');
-Route::post('/register', [UserController::class, 'registerProcessing']);
+use App\Http\Controllers\Usercontroller;
+Route::get('/not-authorized', [Usercontroller::class, 'notLoggedIn'])->name('Not-Loggedin');
+Route::post('/login', [Usercontroller::class, 'loginProcessing'])->name('login');
+Route::post('/register', [Usercontroller::class, 'registerProcessing']);
 
 Route::middleware('auth:sanctum')->group(function () {
     //Post
@@ -25,18 +25,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/comment/{comment_id}/like', [LikeController::class, 'commentUnlike']);//Unlike
 
     //Profile
-    Route::get('/profile', [UserController::class, 'viewProfile']);//View my profile
-    Route::put('/profile', [UserController::class, 'editName']);//Edit name
-    Route::post('/upload/coverphoto', [UserController::class, 'uploadCoverphoto']);//Edit Coverphoto
-    Route::post('/upload/avatar', [UserController::class, 'uploadAvatar']);//Edit Avatar
-    Route::get('/profile/{user_id}', [UserController::class, 'viewFriendProfile']);//View friend profile
+    Route::get('/profile', [Usercontroller::class, 'viewProfile']);//View my profile
+    Route::put('/profile', [Usercontroller::class, 'editName']);//Edit name
+    Route::post('/upload/coverphoto', [Usercontroller::class, 'uploadCoverphoto']);//Edit Coverphoto
+    Route::post('/upload/avatar', [Usercontroller::class, 'uploadAvatar']);//Edit Avatar
+    Route::get('/profile/{user_id}', [Usercontroller::class, 'viewFriendProfile']);//View friend profile
 
     //Comment
     Route::post('/comment/{post_id}', [Commentcontroller::class, 'comment']);//Create Comment
     Route::get('/comment/{post_id}', [Commentcontroller::class, 'getComment']);//Get Comment
 
     //Search
-    Route::get('/search', [UserController::class, 'search']);//Search 
+    Route::get('/search', [Usercontroller::class, 'search']);//Search 
 
     //Follow
     Route::post('/follow/{user_id}', [Followcontroller::class, 'follow']);//Follow
@@ -46,5 +46,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/chatbot', [Chatcontroller::class, 'chatbot']);//Chat with AI
     //Route::get('/chatbot', [Chatcontroller::class, 'getchatbot']);//Load messages with AI
 
-    Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+    Route::post('/logout', [Usercontroller::class, 'logout'])->name('logout');
 });
