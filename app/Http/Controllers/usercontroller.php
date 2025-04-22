@@ -9,7 +9,7 @@ use App\Services\Interfaces\UserServiceInterface;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 
-class Usercontroller extends Controller
+class usercontroller extends Controller
 {
     use ApiResponse;
 
