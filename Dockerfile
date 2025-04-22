@@ -15,7 +15,13 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Tạo thư mục web
 WORKDIR /var/www
 COPY . .
+
+# Cài đặt các phụ thuộc PHP
 RUN composer install --no-dev --optimize-autoloader
+
+# Cấp quyền cho thư mục storage và bootstrap/cache
+RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache && \
+    chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 # Copy file config Nginx
 COPY ./nginx.conf /etc/nginx/sites-available/default
