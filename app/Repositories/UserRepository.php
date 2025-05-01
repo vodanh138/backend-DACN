@@ -32,8 +32,8 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
                 'lastname' => 'new',
                 'firstname'=> 'user',
                 'name'=> 'new user',
-                'ava' => '/images/default-ava.png',
-                'coverphoto' => '/images/default-coverphoto.png',
+                'ava' => 'default-ava_qijax6.png',
+                'coverphoto' => 'default-coverphoto_ol32t6.png',
             ]
         );
     }

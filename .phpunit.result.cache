@@ -1,0 +1,1 @@
+{"version":1,"defects":{"Tests\\Unit\\UserServiceTest::test_view_profile_success":8,"Tests\\Unit\\UserServiceTest::test_view_profile_fail_when_user_not_logged_in":8},"times":{"Tests\\Unit\\UserServiceTest::test_view_profile_success":0.545,"Tests\\Unit\\UserServiceTest::test_view_profile_fail_when_user_not_logged_in":0.073}}

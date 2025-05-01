@@ -25,8 +25,8 @@ class initial extends Seeder
             'lastname' => '',
             'firstname' => 'admin',
             'name' => 'admin',
-            'ava' => '/images/default-ava.png',
-            'coverphoto' => '/images/default-coverphoto.png',
+            'ava' => 'default-ava_qijax6.png',
+            'coverphoto' => 'default-coverphoto_ol32t6.png',
         ]);
         $role = Role::create(['name' => 'admin']);
         $role = Role::create(['name' => 'user']);

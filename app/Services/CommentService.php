@@ -96,9 +96,9 @@ class CommentService implements CommentServiceInterface
 
             return $this->responseSuccess([
                 'comments' => $comments,
-            ], __('messages.getPost-T'));
+            ], __('messages.getComment-T'));
         } catch (\Exception $e) {
-            return $this->responseFail(__('messages.getPost-F'));
+            return $this->responseFail(__('messages.getComment-F'));
         }
     }
 }
